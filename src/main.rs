@@ -105,9 +105,11 @@ fn main() {
     let my_huffman = huffman_tree::HuffmanTree::new("BCAADDDCCACACAC");
     my_huffman.tree.tree_print(None);
     println!("---------------");
+    // test that the tree is generated correctly
     assert!(my_huffman.tree == manual_huffman());
-    // println!("{:?}", my_huffman.tree.get_by_id(&[1, 0, 1]));
-    let m = my_huffman.get_map(None);
+
+    // test the map
+    let m = my_huffman.get_map();
     for key in m.keys() {
         assert_eq!(
             my_huffman
@@ -120,4 +122,13 @@ fn main() {
             *key
         );
     }
+
+    let out = my_huffman.encode("BCAADDDCCACACAC");
+    assert!(
+        out.into_iter()
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>()
+            .join("")
+            == "1000111110110110100110110110"
+    );
 }

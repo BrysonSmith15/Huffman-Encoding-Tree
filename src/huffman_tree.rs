@@ -62,7 +62,7 @@ impl HuffmanTree {
         }
     }
 
-    pub fn get_map(&self, path: Option<&[u8]>) -> HashMap<char, Vec<u8>> {
+    pub fn get_map(&self) -> HashMap<char, Vec<u8>> {
         let mut map = HashMap::<char, Vec<u8>>::new();
         let mut stack: Vec<(&Node<(u32, Option<char>)>, Vec<u8>)> = vec![(&self.tree, vec![])];
         while let Some((next_node, p)) = stack.pop() {
@@ -97,7 +97,12 @@ impl HuffmanTree {
         map
     }
 
-    pub fn encode(&self, text: &str) -> &[u8] {
-        todo!("Need to make the map first")
+    pub fn encode(&self, text: &str) -> Vec<u8> {
+        let m = self.get_map();
+        let mut out: Vec<u8> = vec![];
+        for chr in text.chars() {
+            out.extend(m.get(&chr).unwrap());
+        }
+        out
     }
 }
