@@ -123,12 +123,17 @@ fn main() {
         );
     }
 
+    // test encoder
     let out = my_huffman.encode("BCAADDDCCACACAC");
     assert!(
-        out.into_iter()
+        out.unwrap()
+            .into_iter()
             .map(|x| x.to_string())
             .collect::<Vec<String>>()
             .join("")
             == "1000111110110110100110110110"
     );
+    // test that it returns an err if stuff is bad
+    let out = my_huffman.encode("BCAADDDCCACACACE");
+    assert!(out.is_err() == true);
 }

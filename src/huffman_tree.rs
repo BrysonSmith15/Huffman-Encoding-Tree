@@ -97,12 +97,15 @@ impl HuffmanTree {
         map
     }
 
-    pub fn encode(&self, text: &str) -> Vec<u8> {
+    pub fn encode(&self, text: &str) -> Result<Vec<u8>, String> {
         let m = self.get_map();
         let mut out: Vec<u8> = vec![];
         for chr in text.chars() {
-            out.extend(m.get(&chr).unwrap());
+            match m.get(&chr) {
+                Some(c) => out.extend(c),
+                None => return Err(String::from("A value in the text is not in the tree")),
+            }
         }
-        out
+        Ok(out)
     }
 }
