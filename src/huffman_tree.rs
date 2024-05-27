@@ -17,7 +17,8 @@ impl HuffmanTree {
         }
         let mut queue: Vec<&char> = freqs.keys().collect();
 
-        // keep smallest elements at the end so removing them is less bad for perf
+        // keep smallest elements at the end so removing them is less bad for performance when
+        // popping
         queue.sort_by(
             |c1, c2| match freqs.get(c1).unwrap() < freqs.get(c2).unwrap() {
                 true => std::cmp::Ordering::Greater,
@@ -59,5 +60,44 @@ impl HuffmanTree {
         HuffmanTree {
             tree: node_queue.swap_remove(0),
         }
+    }
+
+    pub fn get_map(&self, path: Option<&[u8]>) -> HashMap<char, Vec<u8>> {
+        let mut map = HashMap::<char, Vec<u8>>::new();
+        let mut stack: Vec<(&Node<(u32, Option<char>)>, Vec<u8>)> = vec![(&self.tree, vec![])];
+        while let Some((next_node, p)) = stack.pop() {
+            match &next_node.get_val() {
+                Some((_, Some(c))) => {
+                    map.insert(*c, p.clone());
+                    ()
+                }
+                None => (),
+                _ => (),
+            };
+
+            match &next_node.lef {
+                Some(l) => stack.push((&**l, {
+                    let mut pl = p.clone();
+                    pl.extend(vec![0]);
+                    pl
+                })),
+                None => (),
+            };
+
+            match &next_node.rig {
+                Some(r) => stack.push((&**r, {
+                    let mut pr = p.clone();
+                    pr.extend(vec![1]);
+                    pr
+                })),
+                None => (),
+            }
+        }
+
+        map
+    }
+
+    pub fn encode(&self, text: &str) -> &[u8] {
+        todo!("Need to make the map first")
     }
 }

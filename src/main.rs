@@ -102,10 +102,22 @@ fn manual_huffman() -> Node<(u32, Option<char>)> {
 }
 
 fn main() {
-    let my_huffman = huffman_tree::HuffmanTree::new("BCAADDDCCACACACE");
+    let my_huffman = huffman_tree::HuffmanTree::new("BCAADDDCCACACAC");
     my_huffman.tree.tree_print(None);
     println!("---------------");
-    //manual_huffman().tree_print(None);
-    println!("---------------");
     assert!(my_huffman.tree == manual_huffman());
+    // println!("{:?}", my_huffman.tree.get_by_id(&[1, 0, 1]));
+    let m = my_huffman.get_map(None);
+    for key in m.keys() {
+        assert_eq!(
+            my_huffman
+                .tree
+                .get_by_id(m.get(&key).unwrap())
+                .unwrap()
+                .unwrap()
+                .1
+                .unwrap(),
+            *key
+        );
+    }
 }
