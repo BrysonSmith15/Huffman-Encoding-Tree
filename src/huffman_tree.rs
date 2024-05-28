@@ -108,4 +108,45 @@ impl HuffmanTree {
         }
         Ok(out)
     }
+
+    pub fn decode(&self, mut encoded: Vec<u8>) -> String {
+        let mut out: String = String::from("");
+        let mut curr: Vec<u8> = vec![];
+        let mut inverse_map = HashMap::new();
+        for (key, val) in self.get_map().into_iter() {
+            inverse_map.insert(val, key);
+        }
+
+        while let Some((_bit, tail)) = encoded.split_first() {
+            match inverse_map.get(&curr) {
+                Some(c) => {
+                    out.push(*c);
+                    curr = vec![];
+                }
+                None => (),
+            };
+            let a = &mut tail.to_vec();
+            encoded = a.to_vec();
+        }
+        out
+    }
+
+    pub fn encode_to_u128(&self, text: &str) -> Result<u128, String> {
+        let v = self.encode(text);
+        let mut out = 0u128;
+        if v.is_err() {
+            return Err(v.err().unwrap());
+        }
+        for bit in v?.iter() {
+            out <<= 1;
+            match bit {
+                1 => {
+                    out += 1;
+                }
+                0 => (),
+                _ => unreachable!("A binary id only has 1 or 0"),
+            };
+        }
+        Ok(out)
+    }
 }

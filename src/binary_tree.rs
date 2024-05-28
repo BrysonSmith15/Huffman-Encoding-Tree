@@ -108,10 +108,7 @@ impl<T: std::fmt::Debug> Node<T> {
                     self.set_right(val);
                     Ok(())
                 }
-                b => Err(format!(
-                    "An id only consists of binary digits, {} used, id is {:?}",
-                    b, id
-                )),
+                _ => unreachable!("There are only 1 or 0 values in a binary number"),
             };
         }
         return match id[0] {
@@ -135,23 +132,22 @@ impl<T: std::fmt::Debug> Node<T> {
             )),
         };
     }
-    pub fn get_by_id(&self, id: &[u8]) -> Result<Option<&T>, String> {
+
+    pub fn get_by_id(&self, id: Vec<u8>) -> Result<Option<&T>, String> {
         if id.len() == 0 {
             return Ok(self.get_val());
         }
         return match id[0] {
             0 => match &self.lef {
-                Some(l) => l.get_by_id(&id[1..]),
-                None => Err(format!("Id Out of bounds at {:?}", id)),
+                Some(l) => l.get_by_id(id[1..].to_vec()),
+                None => Ok(self.get_val()),
             },
             1 => match &self.rig {
-                Some(r) => r.get_by_id(&id[1..]),
-                None => Err(format!("Id Out of bounds at {:?}", id)),
+                Some(r) => r.get_by_id(id[1..].to_vec()),
+                None => Ok(self.get_val()),
+                //None => Err(format!("Id Out of bounds at 0b{:064b}", id)),
             },
-            i => Err(format!(
-                "An id only consists of binary digits, {} used, id is {:?}",
-                i, id,
-            )),
+            _ => unreachable!("A binary number only consists of 1 or 0 values"),
         };
     }
 }
