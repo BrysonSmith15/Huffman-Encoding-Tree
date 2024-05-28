@@ -1,3 +1,4 @@
+use bitvec::vec::BitVec;
 use core::iter::zip;
 use std::collections::HashMap;
 
@@ -131,21 +132,32 @@ impl HuffmanTree {
         out
     }
 
-    pub fn encode_to_u128(&self, text: &str) -> Result<u128, String> {
+    pub fn encode_to_bitvec(&self, text: &str) -> Result<BitVec, String> {
         let v = self.encode(text);
-        let mut out = 0u128;
+        let mut out = BitVec::new();
         if v.is_err() {
             return Err(v.err().unwrap());
         }
         for bit in v?.iter() {
-            out <<= 1;
             match bit {
                 1 => {
-                    out += 1;
+                    out.push(true);
                 }
-                0 => (),
+                0 => out.push(false),
                 _ => unreachable!("A binary id only has 1 or 0"),
             };
+        }
+        Ok(out)
+    }
+
+    pub fn vu8_to_bitvec(&self, encoded: Vec<u8>) -> Result<BitVec, String> {
+        let mut out = BitVec::new();
+        for bit in encoded.iter() {
+            match bit {
+                1 => out.push(true),
+                0 => out.push(false),
+                _ => unreachable!("A binary id only has 1 or 0"),
+            }
         }
         Ok(out)
     }

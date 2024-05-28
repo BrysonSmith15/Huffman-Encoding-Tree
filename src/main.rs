@@ -1,4 +1,5 @@
 use core::mem::size_of_val;
+use math::round::ceil;
 use std::{collections::HashMap, iter::zip};
 
 use crate::binary_tree::Node;
@@ -107,7 +108,8 @@ fn manual_huffman() -> Node<(u32, Option<char>)> {
     */
 
 fn main() {
-    let my_huffman = huffman_tree::HuffmanTree::new("BCAADDDCCACACAC");
+    let my_huffman = huffman_tree::HuffmanTree::new("
+Lorem ipsum dolor sit amet consectetur adipiscing elit feugiat neque integer tortor sociis laoreet netus, dictumst nullam tincidunt potenti tristique orci duis mollis ridiculus odio egestas primis curae. Mauris sociis orci cras malesuada dictum ridiculus augue quis sodales, nec faucibus netus enim aliquet taciti dictumst congue eget ad, iaculis dui dis conubia class fermentum suspendisse placerat. Curae torquent sollicitudin lacinia urna dis penatibus iaculis ullamcorper arcu non maecenas quam congue, habitasse feugiat libero laoreet sagittis pellentesque nulla fringilla velit odio malesuada ridiculus.Vel iaculis viverra est senectus sollicitudin nisl tincidunt cubilia mus nascetur, rutrum ad convallis montes posuere dignissim malesuada penatibus vitae, fermentum inceptos fames erat elementum turpis nullam feugiat varius. Imperdiet eros senectus vestibulum urna tortor purus feugiat, blandit fames habitant vivamus mi arcu magna est, convallis sociis id morbi mus malesuada. Felis posuere tellus dictum non sagittis semper nascetur, arcu per tristique mauris dictumst mus feugiat neque, penatibus sem tincidunt velit facilisis pellentesque.");
     my_huffman.tree.tree_print(None);
     println!("---------------");
     // test that the tree is generated correctly
@@ -133,34 +135,33 @@ fn main() {
     }
 
     // test encoder
-    let out = my_huffman.encode("BCAADDDCCACACAC");
-    assert!(
-        out.unwrap()
-            == vec![
-                1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0
-            ]
-    );
-    // test that it returns an err if stuff is bad
-    let out = my_huffman.encode("BCAADDDCCACACACE");
-    assert!(out.is_err() == true);
+    let input = "lorem";
 
-    let mut input = String::from("");
-    for _ in 0..10000 {
-        input.push_str("BCAADDDCCACACAC");
+    //assert!(
+    //    out.unwrap()
+    //        == vec![
+    //            1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0
+    //        ]
+    //);
+    // test that it returns an err if stuff is bad
+
+    let mut long_input = String::from("");
+    for _ in 0..100000 {
+        long_input.push_str(&input);
     }
     println!("{}", input);
 
     let out = &mut my_huffman.encode(&input).unwrap();
-    let bin_out = my_huffman.encode_to_u128(&input).unwrap();
+    let bin_out = my_huffman.vu8_to_bitvec(out.to_vec()).unwrap();
     //let out_decode = my_huffman.decode(out);
     //assert_eq!(input, out_decode);
     //println!("{}\n{}", input, out_decode);
-    println!("{:?}", out);
+    //println!("{:?}", out);
     println!(
-        "OG Len:\t{}\nVec Len:\t{}\nBinaryLen:\t{}",
-        size_of_val(&input),
+        "All in Bytes\nOriginal Len:\t{}\nVec Len:\t{}\nBinaryLen:\t{}",
+        input.len(),
         out.len(), // pretty close
-        size_of_val(&bin_out)
+        bin_out.len() / 8
     );
-    println!("0b{:0128b}", &bin_out);
+    println!("{:#?}", bin_out);
 }

@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 bitvec = "1.0.1"
 bytes = "1.6.0"
+libmath = "0.2.1"
